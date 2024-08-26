@@ -1,8 +1,9 @@
-package cryptochaser
+package entities
 
 import (
-	"errors"
 	"time"
+
+	"github.com/pkg/errors"
 )
 
 type Coin struct {
@@ -13,10 +14,10 @@ type Coin struct {
 
 func NewCoin(title string, cost float64) (*Coin, error) {
 	if title == "" {
-		return nil, errors.New("название валюты не может быть пустым")
+		return nil, errors.Wrap(ErrInvalidParam, "название валюты не может быть пустым")
 	}
 	if cost <= 0 {
-		return nil, errors.New("курс валюты должен быть положительным числом")
+		return nil, errors.Wrap(ErrInvalidParam, "курс валюты должен быть положительным числом")
 	}
 
 	return &Coin{
