@@ -14,10 +14,10 @@ type Coin struct {
 
 func NewCoin(title string, cost float64) (*Coin, error) {
 	if title == "" {
-		return nil, errors.Wrap(ErrInvalidParam, "название валюты не может быть пустым")
+		return nil, errors.Wrap(ErrInvalidParam, "'title' field can't be blank")
 	}
 	if cost <= 0 {
-		return nil, errors.Wrap(ErrInvalidParam, "курс валюты должен быть положительным числом")
+		return nil, errors.Wrap(ErrInvalidParam, "cost value must be positive")
 	}
 
 	return &Coin{
