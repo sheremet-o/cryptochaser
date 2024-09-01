@@ -2,8 +2,11 @@ package entities_test
 
 import (
 	"testing"
+	"time"
 
+	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+
 	"D:\Dev\_go\cryptochaser\cryptochaser\internal\entities\coin.go"
 )
 
