@@ -15,28 +15,18 @@ type Storage interface {
 	StoreCoin(coin *entities.Coin) error
 }
 
-type DataStorage struct {
+type Storage struct {
 	Coins []*entities.Coin
 }
 
-func (s *DataStorage) GetCurrent (ctx context.Context, titles []string) ([]*entities.Coin, error) {
-	ver currentCoins []*entities.Coin
-
-	for _, title := range titles {
-		latestCoin := &entitites.Coin{Title:title, Cost: 0.0}
-
-		for _, coin := range s.Coin {
-			if coin.Title == title {
-				currentCoins = append(currentCoins, coin)
-				break
-			}
-		}
-	}
-
-	return currentCoins, nil
+func (s *Storage) GetCurrent(ctx context.Context, titles []string) ([]*entities.Coin, error) {
+	coins, err := s.storage.GetCurrent(ctx, titles)
+    if err != nil{
+        return nil, erors.Wrap(err, "GetCurrent")
+    }
 }
 
-func (s *MemoryStorage) GetMax(ctx context.Context, title string) (*entities.Coin, error) {
+func (s *Storage) GetMax(ctx context.Context, title string) (*entities.Coin, error) {
     var maxCoin *entities.Coin
 
     for _, coin := range s.Coins {
@@ -54,7 +44,7 @@ func (s *MemoryStorage) GetMax(ctx context.Context, title string) (*entities.Coi
     return maxCoin, nil
 }
 
-func (s *MemoryStorage) GetMin(ctx context.Context, title string) (*entities.Coin, error) {
+func (s *Storage) GetMin(ctx context.Context, title string) (*entities.Coin, error) {
     var minCoin *entities.Coin
 
     for _, coin := range s.Coins {
@@ -72,7 +62,7 @@ func (s *MemoryStorage) GetMin(ctx context.Context, title string) (*entities.Coi
     return minCoin, nil
 }
 
-func (s *MemoryStorage) GetAvg(title string) (float64, error) {
+func (s *Storage) GetAvg(title string) (float64, error) {
     sum := 0.0
     count := 0
     for _, coin := range s.Coins {
@@ -89,7 +79,7 @@ func (s *MemoryStorage) GetAvg(title string) (float64, error) {
     return sum / float64(count), nil
 }
 
-func (s *MemoryStorage) StoreCoin(coin *entities.Coin) error {
+func (s *Storage) StoreCoin(coin *entities.Coin) error {
     s.Coins = append(s.Coins, coin)
     return nil
 }
