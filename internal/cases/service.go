@@ -5,6 +5,8 @@ import (
 	"math"
 
 	"cryptochaser\internal\entities\coin.go"
+    "D:\Dev\_go\cryptochaser\cryptochaser\internal\entities\coin.go"
+
 )
 
 type Service struct {
@@ -25,6 +27,26 @@ func NewService (s Storage, ec ExternalClient) (*Service, error) {
 		storage: s,
 		extClient: ec,
 	}, nil
+}
+
+func (s *Service) GetCoinbyTitle(ctx context.Context, title string) (*entities,Coin, error){
+    titles := make([]string, 1)
+    titles[0] = title
+
+    coin, err := s.storage.GetCurrent(ctx, titles)
+    if err != nil && !errors.Is(err, entities.ErrNotFound) {
+    }
+    if errors.Is(err, entities.ErrNotFound) {
+        coin, err = s.extClient.GetActualCoin(ctx, titles)
+        if err != nil {
+
+        }
+        err = s.storage.StoreCoin(coins[0])
+        if err != nil {
+        }
+        return coins[0], nil
+    }
+    return coins[0], nil
 }
 
 func (s *Service)GetCurrentRates(ctx context.Context, titles []string)([]*entities.Coin, error){
