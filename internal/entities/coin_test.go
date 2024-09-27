@@ -4,49 +4,60 @@ import (
 	"testing"
 	"time"
 
-	"github.com/golang/mock/gomock"
-	"github.com/stretchr/testify/assert"
+	"github.com/pkg/errors"
 
-	"D:\Dev\_go\cryptochaser\cryptochaser\internal\entities\coin.go"
+	"github.com/sheremet-o/cryptochaser/internal/entities"
 )
 
-func TestNewCoinCorrect(t *testing.T) {
-	coin, err := NewCoin("Testcoin", 10.0)
-	assert.NoError(t, err)
-	assert.Equal(t, coin.Cost, 10.0)
-}
+func TestNewCoin(t *testing.T) {
+	tests := []struct {
+		name        string
+		title       string
+		cost        float64
+		expectedErr error
+	}{
+		{name: "Valid parameters", title: "Bitcoin", cost: 5000, expectedErr: nil},
+		{name: "Empty title", title: "", cost: 5000, expectedErr: errors.Wrap(entities.ErrInvalidParam, "StoreCoin")},
+		{name: "Zero cost", title: "Ethereum", cost: 0, expectedErr: errors.Wrap(entities.ErrInvalidParam, "cost value must be positive")},
+	}
 
-func TestNewCoinEmptyTitle(t *testing.T) {
-	_, err := NewCoin("", 10.0)
-	assert.Error(t, err)
-}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			coin, err := entities.NewCoin(tt.title, tt.cost)
 
-func TestNewCoinNegativeCost(t *testing.T) {
-	_, err := NewCoin("Testcoin", -10.0)
-	assert.Error(t, err)
-}
+			if err != tt.expectedErr {
+				t.Errorf("Expected error to be '%v', but got '%v'", tt.expectedErr, err)
+			}
 
-func TestNewCoinZeroCost(t *testing.T) {
-	_, err := NewCoin("Testcoin", 0)
-	assert.Error(t, err)
+			if err == nil {
+				if coin.Title != tt.title {
+					t.Errorf("Expected title to be '%s', but got '%s'", tt.title, coin.Title)
+				}
+
+				if coin.Cost != tt.cost {
+					t.Errorf("Expected cost to be '%f', but got '%f'", tt.cost, coin.Cost)
+				}
+			}
+		})
+	}
 }
 
 func TestSetTime(t *testing.T) {
-	coin := &Coin{}
-	mockTime := time.Date(2024, time.September, 1, 0, 0, 0, 0, time.UTC)
-	coin.SetTime(mockTime)
-	assert.Equal(t, coin.CreatedAt, mockTime)
+	coin := &entities.Coin{}
+	tm := time.Now()
+	coin.SetTime(tm)
+
+	if !coin.CreatedAt.Equal(tm) {
+		t.Errorf("Expected CreatedAt to be '%v', but got '%v'", tm, coin.CreatedAt)
+	}
 }
 
 func TestSetCurrentTime(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-	mockTime := time.Date(2024, time.September, 1, 0, 0, 0, 0, time.UTC)
-	timeMock := NewMockTime(ctrl)
+	coin := &entities.Coin{}
+	coin.SetCurrentTime()
+	now := time.Now()
 
-	coin := &Coin{}
-	SetTimeFunc(timeMock)
-	c.SetCurrentTime()
-
-	assert.Equal(t, coin.CreatedAt, mockTime)
+	if now.Sub(coin.CreatedAt) > time.Second {
+		t.Errorf("Expected CreatedAt to be current time, but got '%v'", coin.CreatedAt)
+	}
 }
