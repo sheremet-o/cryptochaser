@@ -26,9 +26,9 @@ func NewClient() (*Client, error) {
 
 func GetActualCoin(ctx context.Context, titles []string) ([]*entities.Coin, error) {
 	c := http.Client{}
-	URLRaw := "https://min-api.cryptocompare.com/data/pricemulti?tsyms=USD"
+	URLRaw := "https://api.binance.com/api/v3/exchangeInfo?"
 	queryParams := url.Values{
-		"fsyms": titles,
+		"symbols": titles,
 	}
 
 	u, err := url.Parse(URLRaw)
