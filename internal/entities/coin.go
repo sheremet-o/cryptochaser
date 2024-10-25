@@ -21,8 +21,15 @@ func NewCoin(title string, cost float64) (*Coin, error) {
 	}
 
 	return &Coin{
-		Title:     title,
-		Cost:      cost,
-		CreatedAt: time.Now(),
+		Title: title,
+		Cost:  cost,
 	}, nil
+}
+
+func (c *Coin) SetTime(t time.Time) {
+	c.CreatedAt = t
+}
+
+func (c *Coin) SetCurrentTime() {
+	c.CreatedAt = time.Now()
 }

@@ -1,0 +1,7 @@
+BEGIN;
+CREATE SCHEMA IF NOT EXISTS crypto;
+CREATE TABLE IF NOT EXISTS crypto.cryptocoins(
+    title VARCHAR(255) NOT NULL,
+    cost REAL NOT NULL,
+    actual_at TIMESTAMP NOT NULL DEFAULT NOW());
+END;
