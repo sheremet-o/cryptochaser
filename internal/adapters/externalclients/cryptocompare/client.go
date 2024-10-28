@@ -24,8 +24,7 @@ func NewClient() (*Client, error) {
 	return &c, nil
 }
 
-func GetActualCoin(ctx context.Context, titles []string) ([]*entities.Coin, error) {
-	c := http.Client{}
+func (c *Client) GetActualCoin(ctx context.Context, titles []string) ([]*entities.Coin, error) {
 	URLRaw := "https://min-api.cryptocompare.com/data/pricemulti?tsyms=USD"
 	queryParams := url.Values{
 		"fsyms": titles,
